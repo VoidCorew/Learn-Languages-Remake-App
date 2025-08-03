@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_langs_app/components/build_appbar.dart';
 import 'package:learn_langs_app/models/models.dart';
 import 'package:learn_langs_app/widgets/listen_writing_task.dart';
 import 'package:learn_langs_app/widgets/multiple_choice_task.dart';
@@ -37,7 +38,16 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     final currentTask = widget.lesson.tasks[_currentTaskIndex];
 
-    return Scaffold(body: _buildTaskType(currentTask));
+    return Scaffold(
+      appBar: BuildAppBar(
+        currentTask: _currentTaskIndex + 1,
+        totalTasks: widget.lesson.tasks.length,
+        onBack: () {
+          Navigator.pop(context);
+        },
+      ),
+      body: _buildTaskType(currentTask),
+    );
   }
 
   Widget _buildTaskType(Task task) {
@@ -45,9 +55,9 @@ class _LessonScreenState extends State<LessonScreen> {
       case TaskType.multipleChoice:
         return MultipleChoiceTask(task: task, onAnswer: _onAnswer);
       case TaskType.voiceRecording:
-        return VoiceRecordingTask();
+        return VoiceRecordingTask(task: task, onAnswer: _onAnswer);
       case TaskType.listeningWriting:
-        return ListenWritingTask();
+        return ListenWritingTask(currentTaskIndex: _currentTaskIndex);
     }
   }
 }

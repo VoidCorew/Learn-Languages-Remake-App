@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_langs_app/components/build_appbar.dart';
 import 'package:learn_langs_app/components/build_button.dart';
 import 'package:learn_langs_app/models/models.dart';
 
@@ -25,14 +26,13 @@ class _MultipleChoiceTaskState extends State<MultipleChoiceTask> {
     final answers = widget.task.options ?? [];
 
     return Scaffold(
-      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              widget.task.question,
+              widget.task.question!,
               style: TextStyle(
                 fontSize: 24,
                 fontFamily: 'Nunito',

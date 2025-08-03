@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:learn_langs_app/providers/theme_provider.dart';
 import 'package:learn_langs_app/screens/select_screen.dart';
 import 'package:learn_langs_app/screens/select_screen_remake.dart';
+import 'package:learn_langs_app/screens/test/my_home_page.dart';
+import 'package:learn_langs_app/widgets/voice_recording_task.dart';
 import 'package:provider/provider.dart';
 
 void main() {

@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:learn_langs_app/components/build_mic_button.dart';
 
-class ListenWritingTask extends StatelessWidget {
-  const ListenWritingTask({super.key});
+class ListenWritingTask extends StatefulWidget {
+  final int currentTaskIndex;
+  const ListenWritingTask({super.key, required this.currentTaskIndex});
+
+  @override
+  State<ListenWritingTask> createState() => _ListenWritingTaskState();
+}
+
+class _ListenWritingTaskState extends State<ListenWritingTask> {
+  final bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('')),
       body: SizedBox(
         width: double.infinity,
         child: Padding(
@@ -20,19 +28,20 @@ class ListenWritingTask extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: InkWell(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Icon(Icons.volume_up_rounded),
-                  ),
-                ),
-              ),
+              BuildMicSoundButton(isListening: _pressed, onTap: () {}),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(20),
+              //     border: Border.all(color: Colors.black, width: 2),
+              //   ),
+              //   child: InkWell(
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(16.0),
+              //       child: Icon(Icons.volume_up_rounded),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               TextField(
                 decoration: InputDecoration(

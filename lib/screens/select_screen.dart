@@ -114,7 +114,7 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   final Map<String, List<Lesson>> lessonsMap = {
-    'Japanese_N5': n5Lessons,
+    'Japanese_Level 1': n5Lessons,
     // 'Japanese_N4': n4Lessons,
     // 'Korean_Topik 1': topik1Lessons,
   };
@@ -199,41 +199,27 @@ class _SelectScreenState extends State<SelectScreen> {
                     return;
                   }
 
-                  dynamic repository;
-                  if (selectedLanguage == 'Japanese' &&
-                      selectedLevel == 'Level 1') {
-                    repository = JapaneseN5Repository.n5Course;
-                  } else {
+                  final key = '${selectedLanguage}_$selectedLevel';
+                  final lessons = lessonsMap[key];
+
+                  if (lessons == null || lessons.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Курс для $selectedLanguage $selectedLevel еще не доступен',
-                        ),
-                      ),
+                      SnackBar(content: Text('Уроков для $key пока нет')),
                     );
                     return;
                   }
 
-                  try {
-                    final lesson = repository.lessons.firstWhere(
-                      (l) => l.topic == selectedTopic,
-                    );
+                  final lesson = lessons.firstWhere(
+                    (l) => l.topic == selectedTopic,
+                    orElse: () => lessons.first,
+                  );
 
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => LessonScreen(lesson: lesson),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Урок по теме "$selectedTopic" не найден',
-                        ),
-                      ),
-                    );
-                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LessonScreen(lesson: lesson),
+                    ),
+                  );
                 },
               ),
             ),

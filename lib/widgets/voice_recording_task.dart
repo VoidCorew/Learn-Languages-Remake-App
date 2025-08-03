@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:learn_langs_app/components/build_mic_button.dart';
+import 'package:learn_langs_app/components/build_skip_button.dart';
+import 'package:learn_langs_app/models/models.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class VoiceRecordingTask extends StatefulWidget {
-  // final Lesson lesson;
-  const VoiceRecordingTask({super.key});
+  final Task task;
+  final void Function(bool isCorrect) onAnswer;
+  const VoiceRecordingTask({
+    super.key,
+    required this.task,
+    required this.onAnswer,
+  });
 
   @override
   State<VoiceRecordingTask> createState() => _VoiceRecordingTaskState();
@@ -11,16 +20,93 @@ class VoiceRecordingTask extends StatefulWidget {
 class _VoiceRecordingTaskState extends State<VoiceRecordingTask> {
   int? selectedIndex;
   final List<String> answers = ['Carotte', 'Pomme', 'Banane', 'Tomate'];
+  final String correctAnswer = 'Carotte';
+
+  late stt.SpeechToText _speech;
+  bool _speechEnabled = false;
+  bool _isListening = false;
+  String _recognizedText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechEnabled = await _speech.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    if (!_speechEnabled) {
+      debugPrint('Speech not initialized yet');
+      return;
+    }
+    _speech.listen(
+      onResult: (result) {
+        setState(() {
+          _recognizedText = result.recognizedWords;
+        });
+        if (result.finalResult) {
+          _checkAnswer(_recognizedText);
+        }
+      },
+      localeId: 'fr_FR',
+    );
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speech.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _checkAnswer(String userAnswer) {
+    final normalizedUser = userAnswer.toLowerCase();
+    final normalizedCorrect = correctAnswer.toLowerCase();
+
+    final isCorrect = normalizedUser == normalizedCorrect;
+
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text(isCorrect ? 'Правильно' : 'Неправильно'),
+    //     backgroundColor: isCorrect ? Colors.green : Colors.red,
+    //     duration: const Duration(seconds: 2),
+    //   ),
+    // );
+
+    // if (isCorrect) {
+    //   Future.delayed(const Duration(seconds: 1), () {
+    //     widget.onAnswer(true);
+    //   });
+    // }
+
+    if (isCorrect) {
+      widget.onAnswer(true);
+    } else {
+      widget.onAnswer(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Level 1'),
-        actions: [
-          Image.asset('assets/images/flags/france.png', width: 24, height: 24),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text('Level 1'),
+      //   actions: [
+      //     Image.asset(
+      //       widget.task.imagePath ?? 'assets/placeholders/placeholder.png',
+      //       width: 24,
+      //       height: 24,
+      //     ),
+      //   ],
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -55,7 +141,8 @@ class _VoiceRecordingTaskState extends State<VoiceRecordingTask> {
                               child: Padding(
                                 padding: const EdgeInsets.all(25.0),
                                 child: Image.asset(
-                                  'assets/images/flags/france.png',
+                                  widget.task.imagePath ??
+                                      'assets/placeholders/placeholder.png',
                                   width: 70,
                                   height: 70,
                                   fit: BoxFit.cover,
@@ -120,38 +207,16 @@ class _VoiceRecordingTaskState extends State<VoiceRecordingTask> {
                           //       ),
                           // ),
                           const SizedBox(height: 60),
-
-                          // const SizedBox(height: 20),
-
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     border: BoxBorder.all(color: Colors.red),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       Row(
-                          //         mainAxisSize: MainAxisSize.min,
-                          //         children: [
-                          //           Container(
-                          //             padding: const EdgeInsets.all(16.0),
-                          //             decoration: BoxDecoration(
-                          //               borderRadius: BorderRadius.circular(30),
-                          //             ),
-                          //             child: CircularProgressIndicator(),
-                          //           ),
-                          //           const SizedBox(width: 15),
-                          //           const Text(
-                          //             '0:15',
-                          //             style: TextStyle(
-                          //               fontFamily: 'Nunito',
-                          //               fontSize: 20,
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+                          Text(
+                            _recognizedText.isEmpty
+                                ? 'Say Word'
+                                : 'You said: $_recognizedText',
+                            style: TextStyle(
+                              fontFamily: 'Nunito',
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -161,26 +226,11 @@ class _VoiceRecordingTaskState extends State<VoiceRecordingTask> {
                 Positioned(
                   right: 20,
                   bottom: 20,
-                  child: Material(
-                    color: Colors.transparent,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Icon(
-                            Icons.skip_next_rounded,
-                            color: Colors.deepOrangeAccent,
-                          ),
-                        ),
-                      ),
-                    ),
+                  child: BuildSkipButton(
+                    onPressed: () {
+                      final isCorrect = _recognizedText == widget.task.answer;
+                      widget.onAnswer(isCorrect);
+                    },
                   ),
                 ),
               ],
@@ -191,25 +241,13 @@ class _VoiceRecordingTaskState extends State<VoiceRecordingTask> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Material(
-                  color: Colors.transparent,
-                  shape: const CircleBorder(),
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.deepOrange,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.mic, color: Colors.white),
-                    ),
-                  ),
+                BuildMicSoundButton(
+                  isListening: _isListening,
+                  onTap: _isListening ? _stopListening : _startListening,
                 ),
                 const SizedBox(width: 20),
                 Text(
-                  'Tap to say',
+                  _isListening ? 'Listening...' : 'Tap to say',
                   style: TextStyle(fontSize: 20, fontFamily: 'Nunito'),
                 ),
               ],
