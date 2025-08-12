@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
-        android:label="learn_langs_app"
+        android:label="Learn Languages"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

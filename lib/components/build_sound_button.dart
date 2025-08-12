@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class BuildSkipButton extends StatefulWidget {
-  final VoidCallback onPressed;
-  const BuildSkipButton({super.key, required this.onPressed});
+class BuildSoundButton extends StatefulWidget {
+  final bool isListening;
+  final VoidCallback onTap;
+  const BuildSoundButton({
+    super.key,
+    required this.isListening,
+    required this.onTap,
+  });
 
   @override
-  State<BuildSkipButton> createState() => _BuildSkipButtonState();
+  State<BuildSoundButton> createState() => _BuildSoundButtonState();
 }
 
-class _BuildSkipButtonState extends State<BuildSkipButton> {
+class _BuildSoundButtonState extends State<BuildSoundButton> {
   bool _pressed = false;
 
   void _handleTapDown(TapDownDetails details) {
@@ -41,32 +46,33 @@ class _BuildSkipButtonState extends State<BuildSkipButton> {
       color: Colors.transparent,
       shape: const CircleBorder(),
       child: GestureDetector(
-        // customBorder: const CircleBorder(),
         onTapDown: _handleTapDown,
         onTapUp: _handleTapUp,
         onTapCancel: _handleTapCancel,
         onLongPressEnd: _handleLongPressEnd,
         onLongPressStart: _handleLongPressStart,
-        onTap: widget.onPressed,
+        // customBorder: const CircleBorder(),
+        onTap: widget.onTap,
         child: AnimatedContainer(
           transform: _pressed
               ? Matrix4.translationValues(5, 5, 0)
               : Matrix4.identity(),
           duration: const Duration(milliseconds: 100),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
+            color: widget.isListening ? Colors.red : Colors.deepOrange,
+            borderRadius: BorderRadius.circular(20),
+            // shape: BoxShape.circle,
             boxShadow: _pressed
                 ? []
-                : [BoxShadow(color: Colors.red, offset: Offset(5, 5))],
+                : [
+                    BoxShadow(
+                      color: Colors.deepOrange[300]!,
+                      offset: Offset(5, 5),
+                    ),
+                  ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Icon(
-              Icons.skip_next_rounded,
-              color: Colors.deepOrangeAccent,
-            ),
-          ),
+          child: Icon(Icons.volume_up, color: Colors.white),
         ),
       ),
     );

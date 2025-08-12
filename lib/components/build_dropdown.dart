@@ -80,7 +80,7 @@ class _BuildDropdownState extends State<BuildDropdown> {
             children: [
               Image.asset(lang['icon']!, width: 24, height: 24),
               const SizedBox(width: 10),
-              Text(lang['name']!),
+              Text(lang['name']!, style: TextStyle(fontFamily: 'Nunito')),
             ],
           ),
         );

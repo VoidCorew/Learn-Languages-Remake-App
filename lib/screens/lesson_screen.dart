@@ -28,7 +28,12 @@ class _LessonScreenState extends State<LessonScreen> {
 
   void _onAnswer(bool isCorrect) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(isCorrect ? '✅ Correct!' : '❌ Wrong!')),
+      SnackBar(
+        content: Text(
+          isCorrect ? '✅ Correct!' : '❌ Wrong!',
+          style: TextStyle(fontFamily: 'Nunito'),
+        ),
+      ),
     );
 
     Future.delayed(const Duration(seconds: 1), _goToNextTask);
@@ -53,11 +58,31 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget _buildTaskType(Task task) {
     switch (task.type) {
       case TaskType.multipleChoice:
-        return MultipleChoiceTask(task: task, onAnswer: _onAnswer);
+        return MultipleChoiceTask(
+          task: task,
+          onAnswer: _onAnswer,
+          onPressed: () {
+            Navigator.pop(context);
+            _goToNextTask();
+          },
+        );
       case TaskType.voiceRecording:
-        return VoiceRecordingTask(task: task, onAnswer: _onAnswer);
+        return VoiceRecordingTask(
+          task: task,
+          onAnswer: _onAnswer,
+          onSkipPressed: () {
+            Navigator.pop(context);
+            _goToNextTask();
+          },
+        );
       case TaskType.listeningWriting:
-        return ListenWritingTask(currentTaskIndex: _currentTaskIndex);
+        return ListenWritingTask(
+          task: task,
+          onPressed: () {
+            Navigator.pop(context);
+            _goToNextTask();
+          },
+        );
     }
   }
 }

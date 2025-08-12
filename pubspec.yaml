@@ -38,6 +38,9 @@ dependencies:
   provider: ^6.1.5
   shared_preferences: ^2.5.3
   speech_to_text: ^7.2.0
+  audioplayers: ^6.5.0
+  fluentui_system_icons: ^1.1.273
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +55,11 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icons/app_icon.png
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -68,7 +76,8 @@ flutter:
     - assets/images/flags/
     - assets/data/japanese/n5/
     - assets/placeholders/
-  #   - images/a_dot_ham.jpeg
+    - assets/sounds/japanese/n5/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
